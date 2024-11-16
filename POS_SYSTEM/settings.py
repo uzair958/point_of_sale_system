@@ -13,6 +13,9 @@ import os
 
 from pathlib import Path
 
+import pymysql
+pymysql.install_as_MySQLdb()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -83,8 +86,12 @@ WSGI_APPLICATION = 'POS_SYSTEM.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'posdb',             # Name of my database
+        'USER': 'uzair',             # my MySQL username
+        'PASSWORD': 'hello23sql',    # my MySQL password
+        'HOST': 'localhost',         # Host is 'localhost' for a local MySQL server
+        'PORT': '3306',              # Default MySQL port
     }
 }
 
