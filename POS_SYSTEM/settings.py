@@ -10,10 +10,18 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
-
 from pathlib import Path
-
+import environ
 import pymysql
+
+
+# Initialize environment variables
+env = environ.Env()
+
+# Read .env file (only for local development)
+environ.Env.read_env()
+
+
 pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -84,20 +92,33 @@ WSGI_APPLICATION = 'POS_SYSTEM.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'posdb',             # Name of my database
-        'USER': 'uzair',             # my MySQL username
-        'PASSWORD': 'hello23sql',    # my MySQL password
-        'HOST': 'localhost',         # Host is 'localhost' for a local MySQL server
-        'PORT': '3306',              # Default MySQL port
+
+
+
+if env('RAILWAY_MYSQL_HOST', default=None):
+    # Use Railway MySQL settings for production
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': env('MYSQL_DATABASE'),
+            'USER': env('MYSQLUSER'),
+            'PASSWORD': env('MYSQL_ROOT_PASSWORD'),
+            'HOST': env('RAILWAY_MYSQL_HOST'),    # Use Railway's MySQL host
+            'PORT': env('RAILWAY_MYSQL_PORT'),    # Use Railway's MySQL port
+        }
     }
-}
-
-
-# Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
+else:
+    # Use localhost MySQL for local development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': env('MYSQL_DATABASE'),
+            'USER': env('MYSQLUSER'),
+            'PASSWORD': env('MYSQL_ROOT_PASSWORD'),
+            'HOST': env('MYSQLHOST', default='localhost'),   # Default to localhost if not set
+            'PORT': env('MYSQLPORT', default='3306'),        # Default MySQL port
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
