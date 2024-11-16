@@ -11,7 +11,7 @@
    
     {
       "src": "/(.*)",
-      "destination": "/POS_SYSTEM/wsgi.py"
+      "dest": "/POS_SYSTEM/wsgi.py"
     }
   ]
 }
