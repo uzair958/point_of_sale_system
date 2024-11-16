@@ -10,7 +10,7 @@
   "routes": [
    
     {
-      "source": "/(.*)",
+      "src": "/(.*)",
       "destination": "/POS_SYSTEM/wsgi.py"
     }
   ]
