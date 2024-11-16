@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Inventory{% endblock %}
+
+{% block head %}
+    <style>
+        /* General Reset and Theme Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        .content {
+            position: relative;
+            top: 30px;
+        }
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #34495e;
+            position: relative;
+            left: -50px;
+        }
+        
+        /* Table Styling */
+        table {
+            width: 120%;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            position: relative;
+            left: -50px;
+            
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            font-size: 1em;
+        }
+        
+        th {
+            background-color: #2980b9;
+            color: #fff;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        tr:hover {
+            background-color: #dfe6e9;
+        }
+        
+        td {
+            color: #333;
+            border-bottom: 1px solid #ddd; /* Adds a subtle border between rows */
+        }
+        
+        /* Empty Message Styling */
+        .empty-message {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #777;
+        }
+        
+        /* Making the table responsive */
+        @media (max-width: 768px) {
+            table {
+                width: 100%;
+                overflow-x: auto;
+                display: block;
+                white-space: nowrap;
+            }
+        
+            th, td {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+        }
+        
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <h1>Inventory</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Product Code</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.code }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.category_id.name }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.qty }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="empty-message">No products available in inventory.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
