@@ -4,11 +4,17 @@
     {
       "src": "./POS_SYSTEM/wsgi.py",
       "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.11.5" }
+      "config": {
+        "maxLambdaSize": "15mb",
+        "runtime": "python3.11.5"
+      }
     }
   ],
   "routes": [
-   
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
     {
       "src": "/(.*)",
       "dest": "/POS_SYSTEM/wsgi.py"
