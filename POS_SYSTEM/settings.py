@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
+from math import e
 import os
 from pathlib import Path
 import environ
@@ -113,11 +114,11 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': env('name'),
-            'USER': env('user'),
-            'PASSWORD': env('password'),
-            'HOST': env('host'),   # Default to localhost if not set
-            'PORT': env('port'),     # Default MySQL port
+            'NAME': env('MYSQL_DATABASE', default=env('name')),
+            'USER': env('MYSQLUSER', default=env('user')),
+            'PASSWORD': env('MYSQL_ROOT_PASSWORD', default=env('password')),
+            'HOST': env('RAILWAY_MYSQL_HOST',default=env('host')) , # Default to localhost if not set
+            'PORT': env('RAILWAY_MYSQL_PORT', default=env('port')),     # Default MySQL port
         }
     }
 
