@@ -113,11 +113,11 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'posdb',
-            'USER': 'uzair',
-            'PASSWORD': env('hello23sql'),
-            'HOST': 'localhost',   # Default to localhost if not set
-            'PORT': '3306',        # Default MySQL port
+            'NAME': env('name')
+            'USER': env('user'),
+            'PASSWORD': env('password'),
+            'HOST': env('host)',   # Default to localhost if not set
+            'PORT': env('port')      # Default MySQL port
         }
     }
 
