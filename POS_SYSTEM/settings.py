@@ -104,8 +104,8 @@ if env('RAILWAY_MYSQL_HOST', default=None):
             'NAME': env('MYSQL_DATABASE'),
             'USER': env('MYSQLUSER'),
             'PASSWORD': env('MYSQL_ROOT_PASSWORD'),
-            'HOST': env('RAILWAY_MYSQL_HOST', default='localhost'),  # Correct Railway MySQL host
-            'PORT': env('RAILWAY_MYSQL_PORT', default='3306'),  # Use the correct port from your env variables
+            'HOST': env('RAILWAY_MYSQL_HOST', default=env('host')),  # Correct Railway MySQL host
+            'PORT': env('RAILWAY_MYSQL_PORT', default=env('port')),  # Use the correct port from your env variables
         }
     }
 else:
