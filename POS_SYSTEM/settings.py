@@ -113,11 +113,11 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': env('name')
+            'NAME': env('name'),
             'USER': env('user'),
             'PASSWORD': env('password'),
-            'HOST': env('host)',   # Default to localhost if not set
-            'PORT': env('port')      # Default MySQL port
+            'HOST': env('host'),   # Default to localhost if not set
+            'PORT': env('port'),     # Default MySQL port
         }
     }
 
