@@ -85,7 +85,7 @@ TEMPLATES = [
         },
     },
 ]
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 WSGI_APPLICATION = 'POS_SYSTEM.wsgi.application'
