@@ -39,6 +39,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1', 'localhost',  
     ".vercel.app",
+    "mysql://root:iLUNESurqBBWmsppSLqQkkzbjFCRccnN@mysql.railway.internal:3306/railway"
     ]
 
 
@@ -103,8 +104,8 @@ if env('RAILWAY_MYSQL_HOST', default=None):
             'NAME': env('MYSQL_DATABASE'),
             'USER': env('MYSQLUSER'),
             'PASSWORD': env('MYSQL_ROOT_PASSWORD'),
-            'HOST': env('RAILWAY_MYSQL_HOST'),    # Use Railway's MySQL host
-            'PORT': env('RAILWAY_MYSQL_PORT'),    # Use Railway's MySQL port
+            'HOST': env('RAILWAY_MYSQL_HOST', default='localhost'),  # Correct Railway MySQL host
+            'PORT': env('RAILWAY_MYSQL_PORT', default='3306'),  # Use the correct port from your env variables
         }
     }
 else:
@@ -112,13 +113,14 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': env('MYSQL_DATABASE'),
-            'USER': env('MYSQLUSER'),
-            'PASSWORD': env('MYSQL_ROOT_PASSWORD'),
-            'HOST': env('MYSQLHOST', default='localhost'),   # Default to localhost if not set
-            'PORT': env('MYSQLPORT', default='3306'),        # Default MySQL port
+            'NAME': 'posdb',
+            'USER': 'uzair',
+            'PASSWORD': env('hello23sql'),
+            'HOST': 'localhost',   # Default to localhost if not set
+            'PORT': '3306',        # Default MySQL port
         }
     }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
