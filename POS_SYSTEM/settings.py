@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-from math import e
 import os
 from pathlib import Path
 import environ
@@ -105,8 +104,8 @@ if env('RAILWAY_MYSQL_HOST', default=None):
             'NAME': env('MYSQL_DATABASE'),
             'USER': env('MYSQLUSER'),
             'PASSWORD': env('MYSQL_ROOT_PASSWORD'),
-            'HOST': env('RAILWAY_MYSQL_HOST'),  # Correct Railway MySQL host
-            'PORT': env('RAILWAY_MYSQL_PORT'),  # Use the correct port from your env variables
+            'HOST': env('RAILWAY_MYSQL_HOST', default=env('host')),  # Correct Railway MySQL host
+            'PORT': env('RAILWAY_MYSQL_PORT', default=env('port')),  # Use the correct port from your env variables
         }
     }
 else:
@@ -114,10 +113,10 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': env('MYSQL_DATABASE'),
-            'USER': env('MYSQLUSER'),
-            'PASSWORD': env('MYSQL_ROOT_PASSWORD'),
-            'HOST': env('RAILWAY_MYSQL_HOST',default=env('host')) , # Default to localhost if not set
+            'NAME': env('MYSQL_DATABASE', default=env('name')),
+            'USER': env('MYSQLUSER', default=env('user')),
+            'PASSWORD': env('MYSQL_ROOT_PASSWORD', default=env('password')),
+            'HOST': env('RAILWAY_MYSQL_HOST', default=env('host')),   # Default to localhost if not set
             'PORT': env('RAILWAY_MYSQL_PORT', default=env('port')),     # Default MySQL port
         }
     }
