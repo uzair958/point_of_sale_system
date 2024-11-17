@@ -24,6 +24,7 @@
             flex-direction: column;
             padding: 20px;
             min-height: 100vh;
+            overflow-x: hidden;
         }
         
         h1 {
@@ -31,12 +32,12 @@
             margin-bottom: 20px;
             color: #34495e;
             position: relative;
-            left: -50px;
+            left: -10px;
         }
         
         /* Table Styling */
         table {
-            width: 120%;
+            width: 100%;
             border-collapse: collapse;
             background-color: #fff;
             border-radius: 8px;
@@ -44,8 +45,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin-top: 20px;
             position: relative;
-            left: -50px;
-            
+            left: 0;
         }
         
         th, td {
@@ -82,20 +82,114 @@
         }
         
         /* Making the table responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             table {
                 width: 100%;
-                overflow-x: auto;
+            }
+            th, td {
+                padding: 12px;
+                font-size: 0.95em;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            table {
                 display: block;
+                overflow-x: auto;
                 white-space: nowrap;
             }
-        
             th, td {
                 padding: 10px;
                 font-size: 0.9em;
             }
+            h1 {
+                font-size: 1.5em;
+                left: 0;
+            }
         }
-        
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.2em;
+            }
+            th, td {
+                padding: 8px;
+                font-size: 0.8em;
+            }
+            td {
+                word-wrap: break-word; /* Ensures long text is wrapped in small screens */
+            }
+        }
+
+        /* New media query for very small screens (max-width: 413px) */
+        @media (max-width: 413px) {
+            h1 {
+                font-size: 1.1em;
+                text-align: center;
+            }
+            table {
+                font-size: 0.75em;  /* Reduce font size for smaller screens */
+                overflow-x: auto;   /* Make sure the table can scroll horizontally */
+                white-space: nowrap;
+            }
+            th, td {
+                padding: 6px;       /* Smaller padding for better fit */
+            }
+            td {
+                word-wrap: break-word; /* Ensure text wraps instead of overflowing */
+            }
+            .empty-message {
+                font-size: 0.9em;   /* Smaller font for empty message */
+                padding: 15px;
+            }
+        }
+
+        /* Further adjustments for screens with max-width of 320px to 260px */
+        @media (max-width: 320px) {
+            h1 {
+                font-size: 1.0em;
+                text-align: center;
+            }
+            table {
+                font-size: 0.7em;  /* Significantly reduce font size for ultra-small screens */
+                overflow-x: auto;   /* Allow horizontal scrolling */
+                white-space: nowrap;
+            }
+            th, td {
+                padding: 5px;       /* Further decrease padding for compact display */
+            }
+            td {
+                word-wrap: break-word; /* Ensure long text wraps properly */
+            }
+            .empty-message {
+                font-size: 0.8em;   /* Smaller font for empty message */
+                padding: 12px;
+            }
+        }
+
+        /* Adjustments for screens with max-width of 260px */
+        @media (max-width: 260px) {
+            h1 {
+                font-size: 0.9em; /* Make the title even smaller */
+                text-align: center;
+            }
+            table {
+                font-size: 0.65em; /* Even smaller font size for better fit */
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            th, td {
+                padding: 4px;   /* Minimal padding for small screens */
+            }
+            td {
+                word-wrap: break-word;
+            }
+            .empty-message {
+                font-size: 0.7em; /* Extremely small font for the empty message */
+                padding: 10px;
+            }
+        }
+
     </style>
 {% endblock %}
 

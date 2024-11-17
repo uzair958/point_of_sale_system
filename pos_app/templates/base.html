@@ -10,146 +10,147 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            padding-top: 70px; /* Space for the fixed navbar */
+            padding-top: 60px; /* Space for the fixed navbar */
         }
 
         /* Navbar Styles */
-        .navbar-custom {
+        .navbar {
             position: fixed;
-            top: 0;
-            left: 20px;
-            width: 60%;
-            margin-top: 20px;
-            margin-left: 240px;
-            background-color:#2980b9; /* Semi-transparent blue */
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            top: 5px;
+            left: 0;
+            width: 100%;
+            background-color: #2980b9;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
             z-index: 1000;
-            border-radius: 8px;
-           
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 5px 5px 5px 5px;
         }
 
-        .navbar-custom .navbar-brand {
-            color: #2980b9;
+        .navbar .navbar-brand {
             font-size: 1.5em;
             font-weight: bold;
             text-decoration: none;
-            padding: 15px 20px;
-            position: relative;
-            top: 15px;
-            left: -230px;
-        }
-        
-
-        .navbar-custom .navbar-brand:hover {
-            color: #90caf9;
+            color: white;
         }
 
-        .navbar-custom ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
+        .navbar .navbar-menu {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            left: 35px;
-           
-
-
+            gap: 20px;
         }
 
-        .navbar-custom .nav-item {
-            margin-left: 15px;
-           
+        .navbar .navbar-menu .nav-item {
+            padding: 8px 12px;
+            border-radius: 5px;
+            position: relative;
+            left: -100px;
         }
-         #logout-link {
-            position: relative;
-            top: 0px; 
-        } 
-        
-        .navbar-custom .nav-item.logout {
-            position: relative;
-            right: -250px;
-            top: -10px;
+
+        .navbar .navbar-menu .nav-item a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            
+        }
+
+        .navbar .navbar-menu .nav-item:hover {
+            background-color: #90caf9;
+        }
+
+        /* Logout Button Styling */
+        .navbar .nav-item.logout {
             background-color: #e74c3c;
-            border-radius: 5px;
-            
+            color: white;
         }
 
-
-        #login-link {
-            position: relative;
-            top: 0px; 
-        } 
-        
-        .navbar-custom .nav-item.login {
-            position: relative;
-            right: -250px;
-            top: -10px;
-            background-color: #2980b9;
-            border-radius: 5px;
-            
-        }
-        .navbar-custom .nav-item.logout:hover {
+        .navbar .nav-item.logout:hover {
             background-color: #c0392b;
         }
-       
-        .navbar-custom .nav-link {
-            color: #ffffff;
-            font-weight: bold;
-            text-decoration: none;
-            padding: 10px 15px;
-            display: inline-block;
-            transition: color 0.3s ease;
-            position: relative;
-            top: -12px;
-        }
-          #logout-link:hover {
-              color: #fff;
-          }
-        .navbar-custom .nav-link:hover {
-            color: #90caf9;
+
+        /* Hamburger Menu (hidden by default) */
+        .hamburger {
+            display: none;
+            font-size: 1.5em;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
         }
 
         /* Responsive Styles */
-        @media (max-width: 768px) {
-            .navbar-custom ul {
+        @media (max-width: 905px) {
+            .navbar .navbar-menu {
+                display: none;
                 flex-direction: column;
-                align-items: flex-start;
-                padding-left: 20px;
+                align-items: center;
+                width: 100%;
+                background-color: #2980b9;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                padding: 10px 0;
+                height: auto;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            .navbar .navbar-menu .nav-item {
+                position: relative;
+                left: -15px;
+            }
+            .navbar .navbar-menu.show {
+                display: flex;
+            }
+            .navbar{
+                height: 60px;
             }
 
-            .navbar-custom .nav-item {
-                margin-left: 0;
-                margin-bottom: 10px;
+            .hamburger {
+                display: block;
+                margin-bottom: 15px;
+                margin-right: 20px;
+            }
+            .nav-item.logout{
+                margin-left: 13px;
             }
         }
     </style>
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-custom">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'inventory' %}">POS SYSTEM</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'inventory' %}">Inventory</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'pos' %}">POS</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'return_product' %}">Return Product</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'analysis_dashboard' %}">Dashboard</a></li>
-                    {% if request.session.employee_id %}
-                        <li class="nav-item logout"><a class="nav-link " id="logout-link" href="{% url 'logout' %}">Logout</a></li>
-                    {% else %}
-                        <li class="nav-item login"><a class="nav-link" id="login-link" href="{% url 'login' %}">Login</a></li>
-                    {% endif %}
-                </ul>
-            </div>
+    <div class="navbar">
+        <a class="navbar-brand" href="#">POS SYSTEM</a>
+        <button class="hamburger" id="hamburger">☰</button>
+        <div class="navbar-menu" id="nav-menu">
+            <div class="nav-item"><a href="{% url 'inventory' %}">Inventory</a></div>
+            <div class="nav-item"><a href="{% url 'pos' %}">POS</a></div>
+            <div class="nav-item"><a href="{% url 'return_product' %}">Return Product</a></div>
+            <div class="nav-item"><a href="{% url 'analysis_dashboard' %}">Dashboard</a></div>
+
+            <!-- Dynamic Login/Logout -->
+            {% if request.session.employee_id %}
+                <div class="nav-item logout"><a href="{% url 'logout' %}">Logout</a></div>
+            {% else %}
+                <div class="nav-item"><a href="{% url 'login' %}">Login</a></div>
+            {% endif %}
         </div>
-    </nav>
+    </div>
 
     <!-- Main Content -->
     <div class="content">
-        {% block content %}{% endblock %}
+        {% block content %}
+        {% endblock %}
     </div>
+
+    <!-- JavaScript for Toggle -->
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('show');
+        });
+    </script>
 </body>
 </html>
