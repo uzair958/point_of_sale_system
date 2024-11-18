@@ -157,7 +157,7 @@ USE_TZ = True
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'point_of_sale_system/staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'point_of_sale_system/staticfiles/')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
