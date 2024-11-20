@@ -3,153 +3,242 @@
 {% block title %}POS System{% endblock %}
 
 {% block head %}
-    <style>
-        /* General Reset and Theme Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-   .content {
-       position: relative;
-       top: 20px;
-   }
+<style>
+    /* General Reset and Theme Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        background-color: #f4f6f9;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 20px;
+        min-height: 100vh;
+    }
+
+    h1 {
+        font-size: 2em;
+        margin-bottom: 20px;
+        color: #34495e;
+        text-align: center;
+    }
+
+    .content {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        margin-bottom: 20px;
+    }
+
+    form {
+        width: 100%;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .product-entry {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+        align-items: center;
+    }
+
+    label {
+        font-weight: bold;
+        color: #34495e;
+        flex: 0 0 120px;
+    }
+
+    input[type="text"], input[type="number"] {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1em;
+        flex: 1;
+        max-width: 300px;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 1em;
+        font-weight: bold;
+        border: none;
+        border-radius: 4px;
+        background-color: #2980b9;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 15px;
+        margin-right: 10px;
+    }
+
+    button:hover {
+        background-color: #1e6091;
+    }
+
+    .remove-button {
+        padding: 5px 10px;
+        font-size: 1em;
+        color: #e74c3c;
+        border: 1px solid #e74c3c;
+        background-color: transparent;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .remove-button:hover {
+        background-color: #e74c3c;
+        color: white;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+        font-size: 1em;
+    }
+
+    th {
+        background-color: #2980b9;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #dfe6e9;
+    }
+
+    td {
+        color: #333;
+    }
+
+    .total-section {
+        margin: 20px 0;
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .total-section h3 {
+        font-size: 1em;
+        margin: 5px 0;
+        color: #34495e;
+    }
+
+    /* Media Queries for Responsiveness */
+    @media (max-width: 768px) {
         body {
-            background-color: #f4f6f9;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            padding: 20px;
-            min-height: 100vh;
-        }
-
-        h1 {
-            font-size: 2em;
-            margin-bottom: 20px;
-            color: #34495e;
-        }
-
-        /* Form Styling */
-        form {
-            width: 100%;
-            max-width: 800px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            padding: 10px;
         }
 
         .product-entry {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            align-items: center;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
         label {
-            font-weight: bold;
-            color: #34495e;
+            flex: 0 0 100%;
         }
 
         input[type="text"], input[type="number"] {
+            max-width: 100%;
+        }
+
+        table th, table td {
+            font-size: 0.9em;
             padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1em;
-            width: 100%;
-            max-width: 200px;
         }
 
-        /* Button Styling */
+        .total-section h3 {
+            font-size: 0.9em;
+        }
+    }
+
+    @media (max-width: 480px) {
+        h1 {
+            font-size: 1.5em;
+            margin-top: 10px;
+        }
+
+        .submit-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
         button {
-            padding: 10px 20px;
-            font-size: 1em;
-            font-weight: bold;
-            border: none;
-            border-radius: 4px;
-            background-color: #2980b9;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 15px;
-            margin-right: 10px;
+            font-size: 0.9em;
+            padding: 8px 15px;
         }
 
-        button:hover {
-            background-color: #1e6091;
+        .product-entry input {
+            max-width: 100%;
         }
 
-        /* Remove Button Styling */
         .remove-button {
-            padding: 5px 10px;
-            font-size: 1em;
-            color: #e74c3c;
-            position: relative;
-            top: -5px;
-            background-color: transparent;
-            cursor: pointer;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 3px 8px;
         }
 
-        .remove-button:hover {
-            background-color: #e74c3c;
-            color: white;
-        }
-
-        /* Table Styling */
         table {
-            width: 100%;
-            max-width: 800px;
-            border-collapse: collapse;
-            background-color: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
+            font-size: 0.8em;
         }
 
-        th, td {
-            padding: 12px;
-            text-align: left;
-            font-size: 1em;
+        .total-section h3 {
+            font-size: 0.8em;
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 250px) {
+        body {
+            padding: 5px;
         }
 
-        th {
-            background-color: #2980b9;
-            color: #fff;
-            font-weight: bold;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        tr:hover {
-            background-color: #dfe6e9;
-        }
-
-        td {
-            color: #333;
-        }
-.Total {
-    margin: 20px 20px;
-    margin-bottom: 10px;
-}
-        /* Totals Display */
-        h3 {
+        h1 {
             font-size: 1.2em;
-            color: #34495e;
-            margin: 10px 0;
         }
 
-        h3 span {
-            font-weight: bold;
+        button {
+            padding: 5px 10px;
+            font-size: 0.7em;
         }
-    </style>
+
+        table th, table td {
+            font-size: 0.7em;
+            padding: 5px;
+        }
+
+        .total-section h3 {
+            font-size: 0.7em;
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -158,91 +247,77 @@
 
     <form method="post">
         {% csrf_token %}
-
         <div id="product-entries">
             <div class="product-entry">
                 <label for="product_code">Product Code:</label>
                 <input type="text" name="product_code" required>
-                
                 <label for="quantity">Quantity:</label>
                 <input type="number" name="quantity" min="1" required>
-
-                <!-- Remove button -->
-                <button type="button" class="remove-button" onclick="removeProductEntry(this)">X</button>
+                <button type="button" class="remove-button" onclick="removeProductEntry(this)">Remove</button>
             </div>
         </div>
-
-        <!-- Button to add more product entries -->
-        <button type="button" onclick="addProductEntry()">Add Another Product</button>
-
-        <!-- Calculate totals based on all added products -->
-        <button type="submit">Calculate Total</button>
+        <div class="submit-buttons">
+            <button type="button" onclick="addProductEntry()">Add Another Product</button>
+            <button type="submit">Calculate Total</button>
+        </div>
     </form>
 
     {% if products_info %}
-        <h2>Products List</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Product Code</th>
-                    <th>Product Name</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Total Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for product in products_info %}
-                <tr>
-                    <td>{{ product.code }}</td>
-                    <td>{{ product.name }}</td>
-                    <td>${{ product.price }}</td>
-                    <td>{{ product.quantity }}</td>
-                    <td>${{ product.total_price }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <h2>Products List</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Product Code</th>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products_info %}
+            <tr>
+                <td>{{ product.code }}</td>
+                <td>{{ product.name }}</td>
+                <td>${{ product.price }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>${{ product.total_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     {% endif %}
-    
+
     {% if error_message %}
     <div style="color: red; font-weight: bold;">
         {{ error_message }}
     </div>
     {% endif %}
 
-<div class="total">
-    <!-- Display Grand Total, Tax, and Final Total -->
-    <h3>Grand Total: ${{ grand_total }}</h3>
-    <h3>Tax ({{ tax_rate }}%): ${{ tax_amount }}</h3>
-    <h3>Final Total: ${{ final_total }}</h3>
+    <div class="total-section">
+        <h3>Grand Total: ${{ grand_total }}</h3>
+        <h3>Tax ({{ tax_rate }}%): ${{ tax_amount }}</h3>
+        <h3>Final Total: ${{ final_total }}</h3>
+    </div>
 </div>
-    <script>
-        // JavaScript function to add new product entry fields
-        function addProductEntry() {
-            const productEntries = document.getElementById('product-entries');
-            const newEntry = document.createElement('div');
-            newEntry.classList.add('product-entry');
 
-            newEntry.innerHTML = `
-                <label for="product_code">Product Code:</label>
-                <input type="text" name="product_code" required>
-                
-                <label for="quantity">Quantity:</label>
-                <input type="number" name="quantity" min="1" required>
+<script>
+    function addProductEntry() {
+        const productEntries = document.getElementById('product-entries');
+        const newEntry = document.createElement('div');
+        newEntry.classList.add('product-entry');
+        newEntry.innerHTML = `
+            <label for="product_code">Product Code:</label>
+            <input type="text" name="product_code" required>
+            <label for="quantity">Quantity:</label>
+            <input type="number" name="quantity" min="1" required>
+            <button type="button" class="remove-button" onclick="removeProductEntry(this)">Remove</button>
+        `;
+        productEntries.appendChild(newEntry);
+    }
 
-                <button type="button" class="remove-button" onclick="removeProductEntry(this)">X</button>
-            `;
-
-            productEntries.appendChild(newEntry);
-        }
-
-        // JavaScript function to remove a product entry
-        function removeProductEntry(button) {
-            const productEntry = button.parentElement;
-            productEntry.remove();
-        }
-    </script>
-   
-</div>
+    function removeProductEntry(button) {
+        button.parentElement.remove();
+    }
+</script>
 {% endblock %}

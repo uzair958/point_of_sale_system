@@ -3,151 +3,232 @@
 {% block title %}Return Product{% endblock %}
 
 {% block head %}
-    <style>
-        /* General Reset and Theme Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+<style>
+    /* General Reset and Theme Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
 
-        body {
-            background-color: #f4f6f9;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            padding: 20px;
-            min-height: 100vh;
+    body {
+        background-color: #f4f6f9;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding: 20px;
+        min-height: 100vh;
+    }
+
+    h1 {
+        font-size: 2em;
+        margin-bottom: 20px;
+        color: #34495e;
+    }
+
+    /* Form and Button Styling */
+    form {
+        width: 100%;
+        max-width: 800px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .product-entry {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 15px;
+        align-items: center;
+    }
+
+    label {
+        font-weight: bold;
+        color: #34495e;
+    }
+
+    input[type="text"], input[type="number"] {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1em;
+        width: calc(100% - 20px);
+        max-width: 200px;
+    }
+
+    .remove-btn {
+        padding: 8px;
+        font-size: 0.9em;
+        background-color: #e74c3c;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .remove-btn:hover {
+        background-color: #c0392b;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 1em;
+        font-weight: bold;
+        border: none;
+        border-radius: 4px;
+        background-color: #2980b9;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 15px;
+    }
+
+    button:hover {
+        background-color: #1e6091;
+    }
+
+    /* Error Message Styling */
+    .error-message {
+        color: #721c24;
+        background-color: #f8d7da;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #f5c6cb;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    /* Table Styling */
+    table {
+        width: 100%;
+        max-width: 800px;
+        border-collapse: collapse;
+        background-color: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+        font-size: 1em;
+    }
+
+    th {
+        background-color: #2980b9;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #dfe6e9;
+    }
+
+    td {
+        color: #333;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 1024px) {
+        form {
+            padding: 15px;
         }
 
         h1 {
-            font-size: 2em;
-            margin-bottom: 20px;
-            color: #34495e;
-        }
-
-        /* Form and Button Styling */
-        form {
-            width: 100%;
-            max-width: 800px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .product-entry {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            align-items: center;
-        }
-
-        label {
-            font-weight: bold;
-            color: #34495e;
-        }
-
-        input[type="text"], input[type="number"] {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1em;
-            width: 100%;
-            max-width: 200px;
+            font-size: 1.5em;
         }
 
         button {
-            padding: 10px 20px;
-            font-size: 1em;
-            font-weight: bold;
-            border: none;
-            border-radius: 4px;
-            background-color: #2980b9;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 15px;
+            padding: 8px 16px;
+            font-size: 0.9em;
         }
 
-        button:hover {
-            background-color: #1e6091;
+        .product-entry input {
+            max-width: 100%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .myclass {
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
         }
 
-        /* Remove Button Styling */
-        .remove-button {
-            padding: 5px 10px;
-            font-size: 1em;
-            color: #e74c3c;
-            background-color: transparent;
-           position: relative;
-            top: -5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .remove-button:hover {
-            background-color: #e74c3c;
-            color: white;
-        }
-
-        /* Error Message Styling */
-        .error-message {
-            color: #721c24;
-            background-color: #f8d7da;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #f5c6cb;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        /* Table Styling */
-        table {
+        .content {
+            display: flex;
+            flex-wrap: wrap;
             width: 100%;
-            max-width: 800px;
-            border-collapse: collapse;
-            background-color: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
         }
 
-        th, td {
-            padding: 12px;
-            text-align: left;
-            font-size: 1em;
+        table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+            max-width: 100%;
         }
 
-        th {
-            background-color: #2980b9;
-            color: #fff;
-            font-weight: bold;
+        .error-message {
+            font-size: 0.9em;
+            padding: 8px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        h1 {
+            font-size: 1.2em;
         }
 
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+        .error-message {
+            font-size: 0.8em;
+            padding: 6px;
         }
 
-        tr:hover {
-            background-color: #dfe6e9;
+        button {
+            font-size: 0.8em;
+            padding: 8px 16px;
         }
 
-        td {
-            color: #333;
+        .product-entry input {
+            max-width: 100%;
         }
-    </style>
+    }
+
+    @media (max-width: 455px) {
+        .product-entry {
+            width: 100%;
+        }
+
+        .myclass {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
+<div class="content">
     <h1>Return Products</h1>
-    
+
     {% if error_message %}
         <p class="error-message">{{ error_message }}</p>
     {% endif %}
@@ -163,13 +244,14 @@
                 <label for="quantity">Quantity:</label>
                 <input type="number" name="quantity" min="1" required>
 
-                <!-- Remove button -->
-                <button type="button" class="remove-button" onclick="removeProductEntry(this)">X</button>
+                <button type="button" class="remove-btn" onclick="removeProductEntry(this)">Remove</button>
             </div>
         </div>
 
-        <button type="button" onclick="addProductEntry()">Add Another Product</button>
-        <button type="submit">Return Products</button>
+        <div class="myclass">
+            <button type="button" onclick="addProductEntry()">Add Another Product</button>
+            <button type="submit">Return Products</button>
+        </div>
     </form>
 
     {% if products_info %}
@@ -195,31 +277,33 @@
             </tbody>
         </table>
     {% endif %}
+</div>
 
-    <script>
-        // JavaScript function to add more product entries dynamically
-        function addProductEntry() {
-            const productEntries = document.getElementById('product-entries');
-            const newEntry = document.createElement('div');
-            newEntry.classList.add('product-entry');
+<script>
+    // Add more product entries dynamically
+    function addProductEntry() {
+        const productEntries = document.getElementById('product-entries');
+        const newEntry = document.createElement('div');
+        newEntry.classList.add('product-entry');
+        
+        newEntry.innerHTML = `
+            <label for="product_code">Product Code:</label>
+            <input type="text" name="product_code" required>
             
-            newEntry.innerHTML = `
-                <label for="product_code">Product Code:</label>
-                <input type="text" name="product_code" required>
-                
-                <label for="quantity">Quantity:</label>
-                <input type="number" name="quantity" min="1" required>
+            <label for="quantity">Quantity:</label>
+            <input type="number" name="quantity" min="1" required>
 
-                <button type="button" class="remove-button" onclick="removeProductEntry(this)">X</button>
-            `;
-            
-            productEntries.appendChild(newEntry);
-        }
+            <button type="button" class="remove-btn" onclick="removeProductEntry(this)">Remove</button>
+        `;
+        
+        productEntries.appendChild(newEntry);
+    }
 
-        // JavaScript function to remove a product entry
-        function removeProductEntry(button) {
-            const productEntry = button.parentElement;
-            productEntry.remove();
-        }
-    </script>
+    // Remove a specific product entry
+    function removeProductEntry(button) {
+        const productEntry = button.parentElement;
+        productEntry.remove();
+    }
+</script>
+
 {% endblock %}
