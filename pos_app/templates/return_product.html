@@ -78,6 +78,23 @@
             background-color: #1e6091;
         }
 
+        /* Remove Button Styling */
+        .remove-button {
+            padding: 5px 10px;
+            font-size: 1em;
+            color: #e74c3c;
+            background-color: transparent;
+           position: relative;
+            top: -5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .remove-button:hover {
+            background-color: #e74c3c;
+            color: white;
+        }
+
         /* Error Message Styling */
         .error-message {
             color: #721c24;
@@ -145,6 +162,9 @@
                 
                 <label for="quantity">Quantity:</label>
                 <input type="number" name="quantity" min="1" required>
+
+                <!-- Remove button -->
+                <button type="button" class="remove-button" onclick="removeProductEntry(this)">X</button>
             </div>
         </div>
 
@@ -189,9 +209,17 @@
                 
                 <label for="quantity">Quantity:</label>
                 <input type="number" name="quantity" min="1" required>
+
+                <button type="button" class="remove-button" onclick="removeProductEntry(this)">X</button>
             `;
             
             productEntries.appendChild(newEntry);
+        }
+
+        // JavaScript function to remove a product entry
+        function removeProductEntry(button) {
+            const productEntry = button.parentElement;
+            productEntry.remove();
         }
     </script>
 {% endblock %}

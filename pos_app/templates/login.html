@@ -24,18 +24,10 @@
             min-height: 100vh;
         }
 
-        h1, h3 {
-            color: #34495e;
-        }
-
         h1 {
             font-size: 2em;
             margin-bottom: 20px;
-        }
-
-        h3 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
+            color: #34495e;
         }
 
         /* Message Styling */
@@ -69,7 +61,6 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
-            margin-bottom: 20px;
         }
 
         label {
@@ -104,17 +95,6 @@
         button:hover {
             background-color: #1e6091;
         }
-
-        /* Inline Button Styling for Change Code/Password */
-        .inline-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .inline-buttons form {
-            flex: 1;
-        }
     </style>
 </head>
 <body>
@@ -138,56 +118,5 @@
 
         <button type="submit" name="login" value="1">Login</button>
     </form>
-
-    <!-- Change Code and Change Password buttons -->
-    <div class="inline-buttons">
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" name="change_code">Change Code</button>
-        </form>
-
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" name="change_password">Change Password</button>
-        </form>
-    </div>
-
-    <!-- Change Code Form -->
-    {% if show_change_code_form %}
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="confirm_change_code" value="1">
-            <h3>Change Code</h3>
-            <label for="old_code">Current Code:</label>
-            <input type="text" name="old_code" required>
-
-            <label for="old_password">Current Password:</label>
-            <input type="password" name="old_password" required>
-
-            <label for="new_code">New Code:</label>
-            <input type="text" name="new_code" required>
-
-            <button type="submit">Update Code</button>
-        </form>
-    {% endif %}
-
-    <!-- Change Password Form -->
-    {% if show_change_password_form %}
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="confirm_change_password" value="1">
-            <h3>Change Password</h3>
-            <label for="old_code">Current Code:</label>
-            <input type="text" name="old_code" required>
-
-            <label for="old_password">Current Password:</label>
-            <input type="password" name="old_password" required>
-
-            <label for="new_password">New Password:</label>
-            <input type="password" name="new_password" required>
-
-            <button type="submit">Update Password</button>
-        </form>
-    {% endif %}
 </body>
 </html>

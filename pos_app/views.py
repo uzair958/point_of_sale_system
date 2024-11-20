@@ -24,11 +24,6 @@ def custom_logout_view(request):
 
 
 def login_view(request):
-    context = {
-        'show_change_code_form': False,
-        'show_change_password_form': False,
-    }
-
     if request.method == "POST":
         if "login" in request.POST:
             code = request.POST.get("code")
@@ -43,46 +38,14 @@ def login_view(request):
                 employee.last_login = timezone.now()
                 employee.save()  # Update the last login timestamp
                 
-                
                 # Check and redirect to next URL or default to inventory
-                next_url = request.GET.get('next')# Debugging: Check the value of 'next' parameter
+                next_url = request.GET.get('next')  # Debugging: Check the value of 'next' parameter
                 return redirect(next_url if next_url else 'inventory')
                 
             except Employees.DoesNotExist:
                 messages.error(request, "Invalid code or password.")
 
-        # Handling requests for changing code/password
-        elif "change_code" in request.POST:
-            context['show_change_code_form'] = True
-        elif "change_password" in request.POST:
-            context['show_change_password_form'] = True
-        elif "confirm_change_code" in request.POST:
-            old_code = request.POST.get("old_code")
-            old_password = request.POST.get("old_password")
-            new_code = request.POST.get("new_code")
-
-            try:
-                employee = Employees.objects.get(code=old_code, password=old_password)
-                employee.code = new_code
-                employee.save()
-                messages.success(request, "Code updated successfully!")
-            except Employees.DoesNotExist:
-                messages.error(request, "Invalid current code or password.")
-        elif "confirm_change_password" in request.POST:
-            old_code = request.POST.get("old_code")
-            old_password = request.POST.get("old_password")
-            new_password = request.POST.get("new_password")
-
-            try:
-                employee = Employees.objects.get(code=old_code, password=old_password)
-                employee.password = new_password
-                employee.save()
-                messages.success(request, "Password updated successfully!")
-            except Employees.DoesNotExist:
-                messages.error(request, "Invalid current code or password.")
-
-    return render(request, 'login.html', context)
-
+    return render(request, 'login.html')
 
 
 

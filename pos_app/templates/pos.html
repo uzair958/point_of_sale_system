@@ -11,7 +11,10 @@
             box-sizing: border-box;
             font-family: Arial, sans-serif;
         }
-
+   .content {
+       position: relative;
+       top: 20px;
+   }
         body {
             background-color: #f4f6f9;
             color: #333;
@@ -80,6 +83,23 @@
             background-color: #1e6091;
         }
 
+        /* Remove Button Styling */
+        .remove-button {
+            padding: 5px 10px;
+            font-size: 1em;
+            color: #e74c3c;
+            position: relative;
+            top: -5px;
+            background-color: transparent;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .remove-button:hover {
+            background-color: #e74c3c;
+            color: white;
+        }
+
         /* Table Styling */
         table {
             width: 100%;
@@ -115,7 +135,10 @@
         td {
             color: #333;
         }
-
+.Total {
+    margin: 20px 20px;
+    margin-bottom: 10px;
+}
         /* Totals Display */
         h3 {
             font-size: 1.2em;
@@ -130,6 +153,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="content">
     <h1>Point of Sale</h1>
 
     <form method="post">
@@ -142,6 +166,9 @@
                 
                 <label for="quantity">Quantity:</label>
                 <input type="number" name="quantity" min="1" required>
+
+                <!-- Remove button -->
+                <button type="button" class="remove-button" onclick="removeProductEntry(this)">X</button>
             </div>
         </div>
 
@@ -184,12 +211,12 @@
     </div>
     {% endif %}
 
-
+<div class="total">
     <!-- Display Grand Total, Tax, and Final Total -->
     <h3>Grand Total: ${{ grand_total }}</h3>
     <h3>Tax ({{ tax_rate }}%): ${{ tax_amount }}</h3>
     <h3>Final Total: ${{ final_total }}</h3>
-
+</div>
     <script>
         // JavaScript function to add new product entry fields
         function addProductEntry() {
@@ -203,9 +230,19 @@
                 
                 <label for="quantity">Quantity:</label>
                 <input type="number" name="quantity" min="1" required>
+
+                <button type="button" class="remove-button" onclick="removeProductEntry(this)">X</button>
             `;
 
             productEntries.appendChild(newEntry);
         }
+
+        // JavaScript function to remove a product entry
+        function removeProductEntry(button) {
+            const productEntry = button.parentElement;
+            productEntry.remove();
+        }
     </script>
+   
+</div>
 {% endblock %}
