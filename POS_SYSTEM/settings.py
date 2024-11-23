@@ -92,37 +92,19 @@ TEMPLATES = [
 WSGI_APPLICATION = 'POS_SYSTEM.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+import dj_database_url
+import os
 
+import dj_database_url
+import os
 
-
-
-if env('RAILWAY_MYSQL_HOST', default=None):
-    # Use Railway MySQL settings for production
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': env('MYSQL_DATABASE'),
-            'USER': env('MYSQLUSER'),
-            'PASSWORD': env('MYSQL_ROOT_PASSWORD'),
-            'HOST': env('RAILWAY_MYSQL_HOST'),  # Correct Railway MySQL host
-            'PORT': env('RAILWAY_MYSQL_PORT'),  # Use the correct port from your env variables
-        }
-    }
-else:
-    # Use localhost MySQL for local development
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': env('MYSQL_DATABASE'),
-            'USER': env('MYSQLUSER'),
-            'PASSWORD': env('MYSQL_ROOT_PASSWORD'),
-            'HOST': env('RAILWAY_MYSQL_HOST',default='127.0.0.1'),   # Default to localhost if not set
-            'PORT': env('RAILWAY_MYSQL_PORT', default=env('port')),     # Default MySQL port
-        }
-    }
-
+DATABASES = {
+    'default': dj_database_url.config(
+        default=env('DATABASE_URL'), 
+        conn_max_age=600,
+        ssl_require=True,
+    )
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
