@@ -38,11 +38,10 @@ SECRET_KEY = 'django-insecure-z#bxi2e(75qy&1r2xd5-oo4vtm_5k2q992nt2f$@*aq=q8&ws8
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = [
-    '127.0.0.1', 'localhost',  
-    ".vercel.app",
-    "mysql://root:iLUNESurqBBWmsppSLqQkkzbjFCRccnN@mysql.railway.internal:3306/railway"
-    ]
+
+ALLOWED_HOSTS = ['point-of-sale-system-4cf8.onrender.com', 'localhost', '127.0.0.1']
+
+    
 
 
 
