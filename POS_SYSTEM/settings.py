@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 from email.policy import default
+from math import e
 import os
 from pathlib import Path
 import environ

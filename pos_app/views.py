@@ -1,8 +1,14 @@
+from calendar import c
+from itertools import count
+from math import prod
+from re import I
+from tabnanny import check
+from tkinter import N
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required  # Import login_required decorator
 from django.db.models import F, ExpressionWrapper, FloatField
-from .models import Products, salesItems, ReturnedProducts, Category, Employees
+from .models import Products, Product, product_sold_record, salesItems, ReturnedProducts, Category, Employees
 from django.contrib.auth import logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -13,6 +19,7 @@ from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from .models import Employees
 from django.utils import timezone
+from datetime import date, timedelta
 from django.db.models import F, Sum
 
 
@@ -58,10 +65,9 @@ def inventory_view(request):
     return render(request, 'inventory.html', {'products': products})
 
 
-# @login_required
+
 
 def pos_view(request):
-
     if 'employee_id' not in request.session:
         # Redirect to login page if not logged in
         return redirect('login')
@@ -69,147 +75,198 @@ def pos_view(request):
     products_info = []  # List to store details of each added product
     grand_total = 0
     tax_rate = 0.02  # 2% tax rate
-    error_message = None  # To store any error messages
+    error_message = None 
+    product_summary = {}  # Dictionary to hold aggregated product data
 
     if request.method == "POST":
         product_codes = request.POST.getlist("product_code")
-        quantities = request.POST.getlist("quantity")
+        
+        for code in product_codes:
+            try:
+                # Get the product using the product code
+                product = Product.objects.get(code=code)
 
-        for code, qty in zip(product_codes, quantities):
-            if code and qty.isdigit():  # Check that code is valid and quantity is numeric
-                qty = int(qty)
-                try:
-                    product = Products.objects.get(code=code)
+                # Check if the product has already been sold (based on unique code)
+                if product_sold_record.objects.filter(codes=code).exists():
+                    error_message = f"Product with code '{code}' has already been sold."
+                    break
+                elif not product:
+                    error_message = f"Product with code '{code}' does not exist."
+                    break
 
-                    # Check if the product has enough stock
-                    if product.qty < qty:
-                        error_message = f"Not enough stock for product {product.name}. Only {product.qty} available."
-                        break  # Stop processing further sales if any product has insufficient stock
-                    
-                    price = product.price
-                    total_price = price * qty
-                    grand_total += total_price
+                # Aggregate the product data
+                if code in product_summary:
+                    product_summary[code]['quantity'] += 1
+                    product_summary[code]['total_price'] += product.product_id.price
+                else:
+                    product_summary[code] = {
+                        'name': product.product_id.name,
+                        'price': product.product_id.price,
+                        'quantity': 1,
+                        'total_price': product.product_id.price
+                    }
 
-                    # Update or create an entry in salesItems table
-                    sales_item, created = salesItems.objects.get_or_create(
-                        product_id=product,
-                        defaults={'qty': 0, 'total': 0, 'price': price}
-                    )
+            except Product.DoesNotExist:
+                error_message = f"Product with code '{code}' does not exist."
+                break
 
-                    # Update quantity and total for the product in salesItems
-                    sales_item.qty += qty
-                    sales_item.total += total_price
+        if error_message:
+            return render(request, 'pos.html', {'error_message': error_message})
+
+        # Now, process the aggregated product data and update sales records
+        for code, data in product_summary.items():
+            try:
+                product=Product.objects.get(code=code)
+                # Create a product_sold_record for each unique product
+                product_sold_history = product_sold_record.objects.create(
+                    codes=code,
+                    product_info=product.product_id,
+                    date=timezone.now(),
+                    price=data['price'],
+                )
+                product_sold_history.save()
+
+                # Update or create the sales item (aggregating sales)
+                sales_item, created = salesItems.objects.get_or_create(
+                    product_id=product.product_id,
+                    category_id= Category.objects.get(id=product.product_id.category_id.id),
+                    defaults={'qty': data['quantity'], 'total': data['total_price'], 'price': data['price']}
+                )
+                if not created:
+                    sales_item.qty += data['quantity']
+                    sales_item.total += data['total_price']
                     sales_item.save()
 
-                    # Reduce the product quantity in stock
-                    product.qty -= qty
-                    product.save()
+                # Update stock quantity for the product
+                product.product_id.qty -= data['quantity']
+                product.save()
 
-                    # Store each product's information to be displayed in the template
-                    products_info.append({
-                        'code': code,
-                        'name': product.name,
-                        'price': price,
-                        'quantity': qty,
-                        'total_price': total_price,
-                    })
-                except Products.DoesNotExist:
-                    products_info.append({
-                        'code': code,
-                        'name': "Product not found",
-                        'price': 0,
-                        'quantity': qty,
-                        'total_price': 0,
-                    })
+                # Store the product information for the template
+                products_info.append({
+                    'general_code': code,
+                    'name': data['name'],
+                    'price': data['price'],
+                    'quantity': data['quantity'],
+                    'total_price': data['total_price'],
+                })
 
-        # Calculate tax and final total if no error
-        if not error_message:
-            tax_amount = grand_total * tax_rate
-            final_total = grand_total + tax_amount
-        else:
-            tax_amount = 0
-            final_total = 0
+            except Exception as e:
+                error_message = f"An error occurred while processing product code '{code}': {e}"
+                break
+
+        if error_message:
+            return render(request, 'pos.html', {'error_message': error_message})
+
+        # Calculate tax and final total
+        grand_total = sum(item['total_price'] for item in products_info)
+        tax_amount = grand_total * tax_rate
+        final_total = grand_total + tax_amount
+
+        context = {
+            'products_info': products_info,
+            'grand_total': grand_total,
+            'tax_amount': tax_amount,
+            'final_total': final_total,
+            'tax_rate': tax_rate * 100,  # Display tax rate as percentage
+            'date': timezone.now(),
+        }
 
     else:
-        tax_amount = 0
-        final_total = 0
-
-    context = {
-        'products_info': products_info,
-        'grand_total': grand_total,
-        'tax_amount': tax_amount,
-        'final_total': final_total,
-        'tax_rate': tax_rate * 100,  # Display as percentage
-        'error_message': error_message  # Include the error message in the context
-    }
+        # Handle GET request with default values
+        context = {
+            'products_info': [],
+            'grand_total': 0,
+            'tax_amount': 0,
+            'final_total': 0,
+            'tax_rate': tax_rate * 100,
+            'date': timezone.now(),
+        }
 
     return render(request, 'pos.html', context)
 
+from django.shortcuts import render, redirect
+from django.utils import timezone
+from datetime import timedelta
 
-
-# @login_required
 def return_product_view(request):
     if 'employee_id' not in request.session:
         # Redirect to login page if not logged in
         return redirect('login')
-    products_info = []  # To store information about each returned product
+    
+    products_info = None  # To store information about each returned product
     error_message = None
 
     if request.method == "POST":
         product_codes = request.POST.getlist("product_code")  # List of product codes
-        quantities = request.POST.getlist("quantity")  # List of quantities for each product code
 
-        for code, qty in zip(product_codes, quantities):
-            if code and qty.isdigit():  # Check that the code is not empty and quantity is numeric
-                qty = int(qty)  # Convert quantity to integer
-                try:
-                    # 1. Get the product from the Products table
-                    product = Products.objects.get(code=code)
+        for code in product_codes:
+            try:
+                # Fetch the sold product record
+                prod=Product.objects.get(code=code)
+                product_sold_history = product_sold_record.objects.get(codes=code)
+                product = product_sold_history.product_info
 
-                    # 2. Check the quantity sold
-                    sales_item = salesItems.objects.get(product_id=product)
-                    if sales_item.qty < qty:
-                        error_message = f"The quantity returned exceeds the quantity sold for product {code}."
-                        break  # Exit the loop without updating the inventory or sales record
+                # Check if the product has enough quantity sold
+                sales_item = salesItems.objects.get(product_id=product)
+                if sales_item.qty < 1:
+                    error_message = f"The quantity returned exceeds the quantity sold for product {code}."
+                    break
 
-                    # 3. If quantity is valid, proceed with the return process
-                    # Update the product's inventory in the Products table
-                    product.qty += qty  # Add returned quantity to inventory
-                    product.save()  # Save the updated quantity
+                # Ensure the return is within the allowed time frame (2 days)
+                two_days_ago = product_sold_history.date - timedelta(days=2)
+                if product_sold_history.date < two_days_ago:
 
-                    # 4. Update or create an entry in the ReturnedProducts table
-                    returned_product, created = ReturnedProducts.objects.get_or_create(
-                        product=product,
-                        defaults={'quantity': qty}
-                    )
-                    if not created:
-                        # If the entry exists, add the returned quantity to the existing quantity
-                        returned_product.quantity += qty
-                        returned_product.save()
+                    error_message = f"The product {code} exceeds the 2-day return limit."
+                    break
 
-                    # 5. Update the salesItems table to reflect the returned quantity
-                    sales_item.qty -= qty  # Decrease the sold quantity by the returned amount
-                    sales_item.total -= (product.price * qty)  # Adjust the total based on the returned quantity
-                    sales_item.save()
+                # Update product inventory in the Products table
+                product.qty += 1
+                product.save()
 
-                    # Append product info for display in the template
-                    products_info.append({
-                        'product': product,
-                        'returned_qty': qty,
-                        'new_qty': product.qty,
-                    })
-                except Products.DoesNotExist:
-                    error_message = f"Product with code {code} does not exist."
-                except salesItems.DoesNotExist:
-                    error_message = f"No sales record found for product {code}."
+                # Update or create an entry in the ReturnedProducts table
+                returned_product, created = ReturnedProducts.objects.get_or_create(
+                    product=product,
+                    defaults={'quantity': 1}
+                )
+                if not created:
+                    returned_product.quantity += 1
+                    returned_product.save()
 
-    # Send back the result (products info, error message)
+                # Update salesItems to reflect the returned quantity
+                sales_item.qty -= 1
+                sales_item.total -= product.price
+                sales_item.save()
+
+                # Remove the product from the sold records
+                product_sold_record.objects.get(codes=code).delete()
+
+                # Set success message
+               
+
+            except product_sold_record.DoesNotExist:
+                error_message = f"Product with code {code} does not exist in the sales history."
+                break
+            except salesItems.DoesNotExist:
+                error_message = f"No sales record found for product {code}."
+                break
+            except prod.DoesNotExist:
+                error_message = f"Product with code {code} does not exist."
+                break
+
+            except Exception as e:
+                error_message = str(e)
+                break
+
+            products_info = 'Return Successful'
+    # Prepare the context for rendering the response
     context = {
-        'products_info': products_info,
         'error_message': error_message,
+        'products_info': products_info
     }
 
     return render(request, 'return_product.html', context)
+
+
 
 
 # @login_required

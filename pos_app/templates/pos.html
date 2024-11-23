@@ -17,10 +17,22 @@
         color: #333;
         display: flex;
         justify-content: center;
-        align-items: flex-start;
+        align-items: center;
         flex-direction: column;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
         padding: 20px;
-        min-height: 100vh;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-height: 80vh;
+        overflow-y: auto;  /* Make the container scrollable if needed */
     }
 
     h1 {
@@ -30,20 +42,8 @@
         text-align: center;
     }
 
-    .content {
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        margin-bottom: 20px;
-    }
-
-    form {
-        width: 100%;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
+    .form-section {
+        margin-top: 20px;
     }
 
     .product-entry {
@@ -139,24 +139,38 @@
         color: #333;
     }
 
-    .total-section {
+    .total-section, .tax-section {
         margin: 20px 0;
         background-color: #fff;
         padding: 15px;
         border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .total-section h3 {
+    .total-section h3, .tax-section h3 {
         font-size: 1em;
         margin: 5px 0;
         color: #34495e;
+    }
+
+    .submit-buttons {
+        margin-left: 20px;
+    }
+
+    /* Make the products list scrollable */
+    .products_list {
+        margin-top: 20px;
+        max-height: 400px;
+        overflow-y: auto;
     }
 
     /* Media Queries for Responsiveness */
     @media (max-width: 768px) {
         body {
             padding: 10px;
+        }
+
+        .form-section {
+            padding: 15px;
         }
 
         .product-entry {
@@ -188,19 +202,9 @@
             margin-top: 10px;
         }
 
-        .submit-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
         button {
             font-size: 0.9em;
             padding: 8px 15px;
-        }
-
-        .product-entry input {
-            max-width: 100%;
         }
 
         .remove-button {
@@ -216,106 +220,73 @@
             text-align: center;
         }
     }
-
-    @media (max-width: 250px) {
-        body {
-            padding: 5px;
-        }
-
-        h1 {
-            font-size: 1.2em;
-        }
-
-        button {
-            padding: 5px 10px;
-            font-size: 0.7em;
-        }
-
-        table th, table td {
-            font-size: 0.7em;
-            padding: 5px;
-        }
-
-        .total-section h3 {
-            font-size: 0.7em;
-        }
-    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="content">
-    <h1>Point of Sale</h1>
+<div class="container">
+    <h1>Point of Sale System</h1>
 
-    <form method="post">
-        {% csrf_token %}
-        <div id="product-entries">
-            <div class="product-entry">
-                <label for="product_code">Product Code:</label>
-                <input type="text" name="product_code" required>
-                <label for="quantity">Quantity:</label>
-                <input type="number" name="quantity" min="1" required>
-                <button type="button" class="remove-button" onclick="removeProductEntry(this)">Remove</button>
+    <div class="form-section">
+        <form method="post">
+            {% csrf_token %}
+            <div id="product-entries">
+                <div class="product-entry">
+                    <label for="product_code">Product Code:</label>
+                    <input type="text" name="product_code" required>
+                </div>
             </div>
-        </div>
-        <div class="submit-buttons">
-            <button type="button" onclick="addProductEntry()">Add Another Product</button>
-            <button type="submit">Calculate Total</button>
-        </div>
-    </form>
+            <div class="submit-buttons">
+                <button type="button" onclick="addProductEntry()">Add Another Product</button>
+                <button type="submit">Calculate Total</button>
+            </div>
+        </form>
+    </div>
 
     {% if products_info %}
-    <h2>Products List</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Product Code</th>
-                <th>Product Name</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Total Price</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for product in products_info %}
-            <tr>
-                <td>{{ product.code }}</td>
-                <td>{{ product.name }}</td>
-                <td>${{ product.price }}</td>
-                <td>{{ product.quantity }}</td>
-                <td>${{ product.total_price }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
-
-    {% if error_message %}
-    <div style="color: red; font-weight: bold;">
-        {{ error_message }}
+    <div class="products_list">
+        <h2>Products List</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product Code</th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products_info %}
+                <tr>
+                    <td>{{ product.general_code }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
     {% endif %}
 
+    
+
     <div class="total-section">
-        <h3>Grand Total: ${{ grand_total }}</h3>
-        <h3>Tax ({{ tax_rate }}%): ${{ tax_amount }}</h3>
-        <h3>Final Total: ${{ final_total }}</h3>
+        <h3>Tax ({{ tax_percentage }}%): {{ tax_amount }}</h3>
+        <h3>Total Price: {{ grand_total }}</h3>
+        <h3>-Final total: {{ final_total }}</h3>
     </div>
 </div>
 
 <script>
     function addProductEntry() {
-        const productEntries = document.getElementById('product-entries');
+        const container = document.getElementById('product-entries');
         const newEntry = document.createElement('div');
         newEntry.classList.add('product-entry');
         newEntry.innerHTML = `
             <label for="product_code">Product Code:</label>
             <input type="text" name="product_code" required>
-            <label for="quantity">Quantity:</label>
-            <input type="number" name="quantity" min="1" required>
-            <button type="button" class="remove-button" onclick="removeProductEntry(this)">Remove</button>
+            <button class="remove-button" type="button" onclick="removeProductEntry(this)">Remove</button>
         `;
-        productEntries.appendChild(newEntry);
+        container.appendChild(newEntry);
     }
 
     function removeProductEntry(button) {

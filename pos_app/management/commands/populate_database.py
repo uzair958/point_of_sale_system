@@ -2,7 +2,7 @@ import random
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from faker import Faker
-from pos_app.models import Department, Position, Employees, Category, Products, salesItems, ReturnedProducts
+from pos_app.models import Department, Position, Employees, Category, Products, Product, salesItems, ReturnedProducts, product_sold_record
 
 fake = Faker()
 
@@ -89,9 +89,18 @@ class Command(BaseCommand):
                 )
                 products.append(product)
 
+        # Create Product Codes
+        product_codes = []
+        for product in products:
+            product_code = Product.objects.create(
+                code=fake.unique.uuid4(),
+                product_id=product
+            )
+            product_codes.append(product_code)
+
         # Create Sales Items
         for product in products:
-            sales_item = salesItems.objects.create(
+            salesItems.objects.create(
                 category_id=product.category_id,
                 product_id=product,
                 price=product.price,
@@ -105,6 +114,15 @@ class Command(BaseCommand):
                 product=product,
                 quantity=random.randint(1, 10),
                 date_returned=timezone.now()
+            )
+
+        # Create Product Sold Records
+        for product_code in product_codes[:15]:  # Create 15 sold records
+            product_sold_record.objects.create(
+                codes=product_code.code,
+                product_info=product_code.product_id,
+                date=fake.date_this_year(),
+                price=round(random.uniform(10, 1000), 2)  # Assuming price needs to be associated with sold record
             )
 
         self.stdout.write(self.style.SUCCESS("Database populated with random sample data successfully."))

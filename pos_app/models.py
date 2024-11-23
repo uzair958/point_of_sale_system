@@ -1,4 +1,8 @@
+import code
 from datetime import datetime
+from itertools import product
+from math import prod
+from pyexpat import model
 from re import U
 from unicodedata import category, decimal
 from django.db import models
@@ -47,6 +51,7 @@ class Employees(models.Model):
 
     def __str__(self):
         return self.firstname + ' ' +self.middlename + ' '+self.lastname + ' '
+    
 class Category(models.Model):
     name = models.TextField()
     description = models.TextField(blank= True, null= True)
@@ -57,29 +62,37 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
+
 class Products(models.Model):
-    code = models.CharField(max_length=100,unique=True)
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
+    code = models.CharField(max_length=100,unique=True) 
     name = models.TextField()
+    category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
     description = models.TextField()
-    price = models.FloatField(default=0)
-    qty = models.IntegerField(default=0)  
+    price = models.FloatField(default=0) 
     status = models.IntegerField(default=1)
     date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
-
+    qty = models.IntegerField(default=0)
+    
+    def __str__(self):
+        return  self.name
+    
+class Product(models.Model):
+    code = models.CharField(max_length=100,unique=True)
+    product_id = models.ForeignKey(Products, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.code + " - " + self.name
-
-
-
+        return self.code + " - " + self.product_id.name
+    
+    
 class salesItems(models.Model):
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
     product_id = models.ForeignKey(Products, on_delete=models.CASCADE)
     price = models.FloatField(default=0)
     qty = models.FloatField(default=0)
     total = models.FloatField(default=0)
+    
 
 class ReturnedProducts(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE)  # Link to the Products table
@@ -89,4 +102,9 @@ class ReturnedProducts(models.Model):
     def __str__(self):
         return f"{self.product.name} - Returned Quantity: {self.quantity}"
 
-# Create your models here.
+class product_sold_record(models.Model):
+    codes= models.CharField(max_length=100,unique=True)
+    product_info= models.ForeignKey(Products, on_delete=models.CASCADE)
+    date = models.DateField(default=timezone.now)
+    price= models.FloatField(default=0)
+
