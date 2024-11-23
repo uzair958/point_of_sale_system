@@ -3,5 +3,6 @@ Django==5.1.1
 django_environ==0.4.5
 Faker==32.1.0
 PyMySQL==1.1.1
+gunicorn==23.0.0
 
 
