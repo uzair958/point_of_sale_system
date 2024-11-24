@@ -242,7 +242,7 @@ def return_product_view(request):
                 product_sold_record.objects.get(codes=code).delete()
 
                 # Set success message
-               
+                products_info = 'Return Successful'
 
             except product_sold_record.DoesNotExist:
                 error_message = f"Product with code {code} does not exist in the sales history."
@@ -258,7 +258,7 @@ def return_product_view(request):
                 error_message = str(e)
                 break
 
-            products_info = 'Return Successful'
+           
     # Prepare the context for rendering the response
     context = {
         'error_message': error_message,
