@@ -227,6 +227,14 @@
 <div class="container">
     <h1>Point of Sale System</h1>
 
+    <!-- Error Message -->
+    {% if error_message %}
+    <div style="background-color: #ffcccc; color: #cc0000; padding: 15px; border-radius: 5px; margin-bottom: 20px; text-align: center;">
+        {{ error_message }}
+    </div>
+    {% endif %}
+
+    <!-- Form Section -->
     <div class="form-section">
         <form method="post">
             {% csrf_token %}
@@ -243,6 +251,7 @@
         </form>
     </div>
 
+    <!-- Products List -->
     {% if products_info %}
     <div class="products_list">
         <h2>Products List</h2>
@@ -267,15 +276,15 @@
     </div>
     {% endif %}
 
-    
-
+    <!-- Total Section -->
     <div class="total-section">
-        <h3>Tax ({{ tax_percentage }}%): {{ tax_amount }}</h3>
+        <h3>Tax ({{ tax_rate }}%): {{ tax_amount }}</h3>
         <h3>Total Price: {{ grand_total }}</h3>
-        <h3>-Final total: {{ final_total }}</h3>
+        <h3>Final Total: {{ final_total }}</h3>
     </div>
 </div>
 
+<!-- JavaScript for Dynamic Product Entries -->
 <script>
     function addProductEntry() {
         const container = document.getElementById('product-entries');
