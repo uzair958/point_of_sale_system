@@ -203,7 +203,7 @@ def return_product_view(request):
         for code in product_codes:
             try:
                 # Fetch the sold product record
-                prod=Product.objects.get(code=code)
+    
                 product_sold_history = product_sold_record.objects.get(codes=code)
                 product = product_sold_history.product_info
 
