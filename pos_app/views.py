@@ -77,28 +77,28 @@ def pos_view(request):
     tax_rate = 0.02  # 2% tax rate
     error_message = None 
     product_summary = {}  # Dictionary to hold aggregated product data
-
+   
     if request.method == "POST":
-        product_codes = request.POST.getlist("product_code")
+         product_codes = request.POST.getlist("product_code")
         
-        for code in product_codes:
-            try:
+         for code in product_codes:
+             try:
                 # Get the product using the product code
-                product = Product.objects.get(code=code)
+                 product = Product.objects.get(code=code)
 
                 # Check if the product has already been sold (based on unique code)
-                if product_sold_record.objects.filter(codes=code).exists():
+                 if product_sold_record.objects.filter(codes=code).exists():
                     error_message = f"Product with code '{code}' has already been sold."
                     break
-                elif not product:
+                 elif not product:
                     error_message = f"Product with code '{code}' does not exist."
                     break
 
                 # Aggregate the product data
-                if code in product_summary:
+                 if code in product_summary:
                     product_summary[code]['quantity'] += 1
                     product_summary[code]['total_price'] += product.product_id.price
-                else:
+                 else:
                     product_summary[code] = {
                         'name': product.product_id.name,
                         'price': product.product_id.price,
@@ -106,43 +106,44 @@ def pos_view(request):
                         'total_price': product.product_id.price
                     }
 
-            except Product.DoesNotExist:
+             except Product.DoesNotExist:
                 error_message = f"Product with code '{code}' does not exist."
                 break
 
-        if error_message:
-            return render(request, 'pos.html', {'error_message': error_message})
+         if error_message:
+             return render(request, 'pos.html', {'error_message': error_message})
 
+         else:
         # Now, process the aggregated product data and update sales records
-        for code, data in product_summary.items():
-            try:
-                product=Product.objects.get(code=code)
+          for code, data in product_summary.items():
+             try:
+                 product=Product.objects.get(code=code)
                 # Create a product_sold_record for each unique product
-                product_sold_history = product_sold_record.objects.create(
+                 product_sold_history = product_sold_record.objects.create(
                     codes=code,
                     product_info=product.product_id,
                     date=timezone.now(),
                     price=data['price'],
                 )
-                product_sold_history.save()
+                 product_sold_history.save()
 
                 # Update or create the sales item (aggregating sales)
-                sales_item, created = salesItems.objects.get_or_create(
+                 sales_item, created = salesItems.objects.get_or_create(
                     product_id=product.product_id,
                     category_id= Category.objects.get(id=product.product_id.category_id.id),
                     defaults={'qty': data['quantity'], 'total': data['total_price'], 'price': data['price']}
                 )
-                if not created:
+                 if not created:
                     sales_item.qty += data['quantity']
                     sales_item.total += data['total_price']
                     sales_item.save()
 
                 # Update stock quantity for the product
-                product.product_id.qty -= data['quantity']
-                product.save()
+                 product.product_id.qty -= data['quantity']
+                 product.save()
 
                 # Store the product information for the template
-                products_info.append({
+                 products_info.append({
                     'general_code': code,
                     'name': data['name'],
                     'price': data['price'],
@@ -150,19 +151,19 @@ def pos_view(request):
                     'total_price': data['total_price'],
                 })
 
-            except Exception as e:
+             except Exception as e:
                 error_message = f"An error occurred while processing product code '{code}': {e}"
                 break
 
-        if error_message:
+         if error_message:
             return render(request, 'pos.html', {'error_message': error_message})
 
         # Calculate tax and final total
-        grand_total = sum(item['total_price'] for item in products_info)
-        tax_amount = grand_total * tax_rate
-        final_total = grand_total + tax_amount
+         grand_total = sum(item['total_price'] for item in products_info)
+         tax_amount = grand_total * tax_rate
+         final_total = grand_total + tax_amount
 
-        context = {
+         context = {
             'products_info': products_info,
             'grand_total': grand_total,
             'tax_amount': tax_amount,
@@ -173,7 +174,7 @@ def pos_view(request):
 
     else:
         # Handle GET request with default values
-        context = {
+         context = {
             'products_info': [],
             'grand_total': 0,
             'tax_amount': 0,
