@@ -250,7 +250,7 @@ def return_product_view(request):
             except salesItems.DoesNotExist:
                 error_message = f"No sales record found for product {code}."
                 break
-            except prod.DoesNotExist:
+            except Product.objects.get(code=code).DoesNotExist:
                 error_message = f"Product with code {code} does not exist."
                 break
 
