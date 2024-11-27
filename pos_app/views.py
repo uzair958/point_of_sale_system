@@ -88,7 +88,7 @@ def pos_view(request):
 
                 # Check if the product has already been sold (based on unique code)
                  if product_sold_record.objects.filter(codes=code).exists():
-                    error_message = f"Product with code '{code}' has already been sold."
+                    error_message = f"Product with code '{code}' has been selected more then 1 time or already sold."
                     break
                  elif not product:
                     error_message = f"Product with code '{code}' does not exist."
@@ -105,6 +105,15 @@ def pos_view(request):
                         'quantity': 1,
                         'total_price': product.product_id.price
                     }
+        
+                # Create a product_sold_record for each unique product
+                 product_sold_history = product_sold_record.objects.create(
+                    codes=code,
+                    product_info=product.product_id,
+                    date=timezone.now(),
+                    price=data['price'],
+                )
+                 product_sold_history.save()
 
              except Product.DoesNotExist:
                 error_message = f"Product with code '{code}' does not exist."
@@ -117,15 +126,7 @@ def pos_view(request):
         # Now, process the aggregated product data and update sales records
           for code, data in product_summary.items():
              try:
-                 product=Product.objects.get(code=code)
-                # Create a product_sold_record for each unique product
-                 product_sold_history = product_sold_record.objects.create(
-                    codes=code,
-                    product_info=product.product_id,
-                    date=timezone.now(),
-                    price=data['price'],
-                )
-                 product_sold_history.save()
+               
 
                 # Update or create the sales item (aggregating sales)
                  sales_item, created = salesItems.objects.get_or_create(
