@@ -334,3 +334,46 @@ def custom_logout_view(request):
     messages.info(request, "You have been logged out successfully.")
     logout(request)  # Logs out the user
     return redirect('login')
+
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import user_passes_test
+from django.utils import timezone
+from django.contrib import messages
+from datetime import timedelta
+from pos_app.models import Product, product_sold_record
+
+# Check if the user is an admin
+
+# Check if the user is an admin
+def admin_required(user):
+    return user.is_staff
+
+@user_passes_test(admin_required, login_url='/admin')  # Redirect to admin login page if not an admin
+def delete_old_sold_products(request):
+    if request.method == "POST":
+        # Calculate the threshold date (15 days ago)
+        threshold_date = timezone.now().date() - timedelta(days=30)
+
+        # Fetch product sold records older than 15 days
+        old_sold_records = product_sold_record.objects.filter(date__lt=threshold_date)
+
+        deleted_count = 0
+        for record in old_sold_records:
+            try:
+                # Fetch the associated product using the code
+                product = Product.objects.get(code=record.codes)
+                product.delete()
+                record.delete()
+                deleted_count += 1
+            except Product.DoesNotExist:
+                continue  # Skip if no product is found
+
+        # Add a success message
+        messages.success(request, f"Deleted {deleted_count} products and their sold history records older than 30 days.")
+        return redirect("delete_old_products")
+
+    # Render the delete page
+    return render(request, "delete_products.html")
