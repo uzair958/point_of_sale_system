@@ -111,7 +111,7 @@ def pos_view(request):
                     codes=code,
                     product_info=product.product_id,
                     date=timezone.now(),
-                    price=data['price'],
+                    price=product.product_id.price,
                 )
                  product_sold_history.save()
 
